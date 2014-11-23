@@ -4,29 +4,30 @@
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-dropdown/paper-dropdown.html">
 
-<polymer-element name="contacts-page" extends="base-page"
-                 attributes="contacts heading">
+<polymer-element name="contacts-page" extends="base-page" attributes="category">
   <template>
     <link rel="stylesheet" href="contacts-page.css">
+    <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
+    </core-media-query>
 
-    <core-drawer-panel id="drawerPanel" forceNarrow>
+    <core-drawer-panel id="drawerPanel" forceNarrow cross-fade?="{{largeScreen}}">
 
       <!-- Drawer -->
       <core-header-panel drawer mode="seamed">
         <core-toolbar>Menu</core-toolbar>
-        <core-menu selected="0" on-core-select="{{closeDrawer}}">
-          <paper-item noink>
-            <a href="/contacts/all" on-click="{{navigate}}">
+        <core-menu selected="{{category}}" valueattr="category" on-core-select="{{closeDrawer}}">
+          <paper-item noink category="all">
+            <a href="/contacts/all" is="pushstate-anchor">
               All Contacts
             </a>
           </paper-item>
-          <paper-item noink>
-            <a href="/contacts/favorites" on-click="{{navigate}}">
+          <paper-item noink category="favorites">
+            <a href="/contacts/favorites" is="pushstate-anchor">
               Favorites
             </a>
           </paper-item>
-          <paper-item noink>
-            <a href="/contacts/circles" on-click="{{navigate}}">
+          <paper-item noink category="circles">
+            <a href="/contacts/circles" is="pushstate-anchor">
               Circles
             </a>
           </paper-item>
@@ -55,11 +56,13 @@
           </core-toolbar>
           <div class="content">
 
+            <core-ajax url="https://polymer-contacts.firebaseio.com/{{category}}.json"
+                       auto response="{{contacts}}"></core-ajax>
             <core-list id="list" data="{{contacts}}"
                                  scrollTarget="{{$.headerPanel.scroller}}"
                                  runwayFactor="5">
               <template>
-                <a href="{{index | getUrl}}" on-click="{{navigate}}">
+                <a href="{{index | getUrl}}" is="pushstate-anchor">
                   <div class="row" layout horizontal center>
                     <core-image src="{{model.avatar}}" preload sizing="cover">
                     </core-image>
@@ -73,7 +76,7 @@
         </core-header-panel>
 
         <!-- Add contact -->
-        <a href="/add" on-click="{{navigate}}">
+        <a href="/add" is="pushstate-anchor">
           <paper-fab icon="add" noink></paper-fab>
         </a>
       </div>
@@ -82,6 +85,12 @@
   <script>
   (function() {
     Polymer({
+      domReady: function() {
+        this.heading = this.category.charAt(0).toUpperCase() + this.category.slice(1);
+        if (this.heading === 'All') {
+          this.heading = 'All Contacts';
+        }
+      },
       willPrepare: function() {
         this.super();
         this.$.list.updateSize()

@@ -1,8 +1,11 @@
 <link rel="import" href="../base-page/base-page.html">
 
-<polymer-element name="info-page" extends="base-page" attributes="contactId contacts" layout vertical>
+<polymer-element name="info-page" extends="base-page" attributes="contactId category" layout vertical fit>
   <template>
     <link rel="stylesheet" href="info-page.css">
+
+    <core-ajax url="https://polymer-contacts.firebaseio.com/{{category}}.json"
+               auto on-core-response="{{contactsResponse}}"></core-ajax>
 
     <!--
     On larger screens, change the behavior of the header panel so it doesn't
@@ -15,10 +18,12 @@
     <core-scroll-header-panel id="scrollHeaderPanel"
                               condenses?="{{!largeScreen}}"
                               fixed?="{{largeScreen}}"
+                              cross-fade?="{{largeScreen}}"
+                              fade-scale?="{{!largeScreen}}"
                               flex>
 
       <core-toolbar class="{{ {tall: !largeScreen} | tokenList}}">
-        <a href="/" on-click="{{goBack}}">
+        <a href="/" is="html5-history-anchor" back>
           <paper-icon-button icon="arrow-back"></paper-icon-button>
         </a>
         <div id="title" class="bottom indent">{{contacts[contactId].name}}</div>
@@ -111,8 +116,9 @@
         // so they see the full profile photo
         this.$.scrollHeaderPanel.scroller.scrollTop = 0;
       },
-      contactIdChanged: function(oldVal, newVal) {
-        this.contact_ = this.contacts[newVal];
+      contactsResponse: function(e) {
+        this.contacts = e.detail.response;
+        this.contact_ = this.contacts[this.contactId];
 
         if (this.largeScreen) return;
 

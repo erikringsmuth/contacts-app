@@ -44,49 +44,16 @@
 </head>
 
 <body unresolved>
-  <template id="app" is="auto-binding">
 
-    <core-ajax id="ajax"
-               url="https://polymer-contacts.firebaseio.com/{{category}}.json"
-               response="{{contacts}}"></core-ajax>
-
-    <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
-    </core-media-query>
-
-    <!-- TODO: Hero transition for desktop -->
-    <core-animated-pages id="pages" selected="{{selected}}"
-                         transitions="cross-fade fade-slide-up fade-scale" fit>
-
-      <section layout vertical>
-        <contacts-page class="page" id="contacts" contacts="{{contacts}}"
-                       cross-fade?="{{largeScreen}}"
-                       heading="{{heading}}"
-                       flex>
-        </contacts-page>
-      </section>
-
-      <section layout vertical>
-        <info-page class="page" id="info" contacts="{{contacts}}"
-                   cross-fade?="{{largeScreen}}"
-                   fade-scale?="{{!largeScreen}}"
-                   flex>
-        </info-page>
-      </section>
-
-      <section layout vertical>
-        <add-page class="page" id="add" contacts="{{contacts}}"
-                  cross-fade?="{{largeScreen}}"
-                  fade-slide-up?="{{!largeScreen}}"
-                  flex>
-        </add-page>
-      </section>
-
-    </core-animated-pages>
-
-  </template>
+  <!-- TODO: Hero transition for desktop -->
+  <app-router mode="pushstate" core-animated-pages transitions="cross-fade fade-slide-up fade-scale">
+    <app-route path="/contacts/:category" element="contacts-page"></app-route>
+    <app-route path="/contacts/:category/:contactId" element="info-page"></app-route>
+    <app-route path="/add" element="add-page"></app-route>
+    <app-route path="*" redirect="/contacts/all"></app-route>
+  </app-router>
 
   <!-- build:js /scripts/app.js -->
-  <script src="/bower_components/director/build/director.js"></script>
   <script src="/scripts/app.js"></script>
   <!-- endbuild-->
 </body>

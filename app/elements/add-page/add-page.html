@@ -3,18 +3,20 @@
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
-<polymer-element name="add-page" extends="base-page" layout vertical>
+<polymer-element name="add-page" extends="base-page" layout vertical fit>
   <template>
     <link rel="stylesheet" href="add-page.css">
+    <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
+    </core-media-query>
 
-    <core-header-panel id="headerPanel" fit mode="seamed">
+    <core-header-panel id="headerPanel" fit mode="seamed" cross-fade?="{{largeScreen}}" fade-slide-up?="{{!largeScreen}}">
 
       <core-toolbar>
-        <a href="/" on-click="{{goBack}}">
+        <a href="/" is="html5-history-anchor" back>
           <paper-icon-button icon="arrow-back"></paper-icon-button>
         </a>
         <div id="title" flex>{{contactName}}</div>
-        <a href="/" on-click="{{goBack}}">
+        <a href="/"  is="html5-history-anchor" back>
           <paper-icon-button icon="check"></paper-icon-button>
         </a>
       </core-toolbar>
